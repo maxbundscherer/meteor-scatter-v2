@@ -4,6 +4,9 @@ Detect meteors using 6-meter radio waves in
 the [live stream from Astronomiemuseum der Sternwarte Sonneberg ](https://www.twitch.tv/astronomiemuseum) or in WAV
 files.
 
+The DSP approach described in the publication *Meteor Detection based on Forward Scattering with SDR and the BRAMS
+Beacon* is implemented here. There are separate analysis tools.
+
 Old [version, repository and deprecated/long description](https://github.com/maxbundscherer/meteor-scatter).
 
 ## Examples
@@ -32,7 +35,7 @@ Old [version, repository and deprecated/long description](https://github.com/max
 ### Run (Detection)
 
 - `source .venv/bin/activate`
-- `./run_wav.sh` (offline demo) or `./run_twitch.sh` (live stream)
+- `./run_wav.sh` (offline demo) or `./run_twitch.sh` (live stream from Astronomiemuseum der Sternwarte Sonneberg)
 
 ### Run (Analyze)
 

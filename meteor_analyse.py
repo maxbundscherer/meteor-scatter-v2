@@ -134,7 +134,7 @@ def plot_event_duration(dataframe: pd.DataFrame) -> go.Figure:
 
 def plot_duration_histogram(dataframe: pd.DataFrame) -> go.Figure:
     figure = go.Figure(go.Histogram(
-        x=dataframe["duration_seconds"], nbinsx=200,
+        x=dataframe["duration_seconds"], nbinsx=400,
         name="Dauer", marker_color="#1f77b4",
     ))
     return _layout(figure, "Verteilung der Event-Dauer", "Dauer [s]", "Anzahl")

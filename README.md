@@ -4,8 +4,13 @@ Detect meteors using 6-meter radio waves in
 the [live stream from Astronomiemuseum der Sternwarte Sonneberg ](https://www.twitch.tv/astronomiemuseum) or in WAV
 files.
 
+## Examples
+
 ![](resources/beispielTwitch.png)
 ![](resources/beispielWav.png)
+
+## Approach
+
 ![](resources/SystemMS.jpg)
 
 ## Instructions

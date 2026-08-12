@@ -1,0 +1,7 @@
+in/
+inStewa/
+out/
+.idea/
+meteor_detect.log
+.DS_Store
+__pycache__/

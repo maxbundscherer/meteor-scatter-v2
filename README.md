@@ -34,16 +34,18 @@ Old [version, repository and deprecated/long description](https://github.com/max
 - `source .venv/bin/activate`
 - `pip install -r requirements_ubuntu.txt`
 
-### Run (Detection)
+### Run
+
+#### Detection
 
 - `source .venv/bin/activate`
 - `./run_wav.sh` (offline demo) or `./run_twitch.sh` (live stream from Astronomiemuseum der Sternwarte Sonneberg)
 
-### Run (Analyze)
+#### Analyze
 
 - `source .venv/bin/activate`
 - `python meteor_analyse.py`
 
-### Run (old Analyze)
+#### Old Analyze
 
 - `old/MS.ipynb`

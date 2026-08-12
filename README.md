@@ -4,6 +4,8 @@ Detect meteors using 6-meter radio waves in
 the [live stream from Astronomiemuseum der Sternwarte Sonneberg ](https://www.twitch.tv/astronomiemuseum) or in WAV
 files.
 
+Old [version, repository and deprecated/long description](https://github.com/maxbundscherer/meteor-scatter).
+
 ## Examples
 
 ![](resources/beispielTwitch.png)
@@ -40,7 +42,3 @@ files.
 ### Run (old Analyze)
 
 - `old/MS.ipynb`
-
-## Origin
-
-Old [version, repository and deprecated/long description](https://github.com/maxbundscherer/meteor-scatter).

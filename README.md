@@ -9,10 +9,14 @@ on Forward Scattering with SDR and the BRAMS Beacon* is implemented here. There 
 
 Old [version, repository and deprecated/long description](https://github.com/maxbundscherer/meteor-scatter).
 
-## Examples
+## Examples (live detections)
 
 ![](resources/beispielTwitch.png)
 ![](resources/beispielWav.png)
+
+## Visualizations (csv files)
+
+tbd
 
 ## Approach
 

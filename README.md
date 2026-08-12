@@ -43,7 +43,8 @@ tbd
 #### Detection
 
 - `source .venv/bin/activate`
-- `./run_wav.sh` (offline demo) or `./run_twitch.sh` (live stream from Astronomiemuseum der Sternwarte Sonneberg)
+- `./run_wav.sh` (offline demo with sample wav-file) or `./run_twitch.sh` (live stream from Astronomiemuseum der
+  Sternwarte Sonneberg)
 
 #### Analyze
 

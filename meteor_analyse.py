@@ -221,6 +221,26 @@ def plot_counts_per_date_hour(dataframe: pd.DataFrame) -> go.Figure:
     return figure
 
 
+def plot_counts_per_date_minute(dataframe: pd.DataFrame) -> go.Figure:
+    """Zeigt Datum/Zeit gegen die Anzahl der Events innerhalb jeder Minute."""
+    if dataframe.empty:
+        return _empty_figure("Detektionen pro Minute")
+
+    data = dataframe.assign(time_minute=dataframe["start_time"].dt.floor("min"))
+    minutes = pd.date_range(
+        data["time_minute"].min(), data["time_minute"].max(), freq="min"
+    )
+    all_counts, discarded_counts = _count_series(
+        data, "time_minute", minutes
+    )
+    figure = _count_figure(
+        minutes, all_counts, discarded_counts,
+        "Detektionen pro Minute nach Datum", "Datum und Minute (UTC)",
+    )
+    figure.update_xaxes(tickformat="%d.%m.%Y<br>%H:%M")
+    return figure
+
+
 def plot_counts_by_hour(dataframe: pd.DataFrame) -> go.Figure:
     data = dataframe.assign(hour=dataframe["start_time"].dt.hour)
     index = pd.Index(range(24))
@@ -333,6 +353,7 @@ PLOTS: dict[str, Callable[[pd.DataFrame], go.Figure]] = {
     "report-dauer-snr.html": plot_duration_snr,
     "report-snr-histogramm.html": plot_snr_histogram,
     "report-anzahl-pro-stunde.html": plot_counts_per_date_hour,
+    "report-anzahl-pro-minute.html": plot_counts_per_date_minute,
     "report-count-hour.html": plot_counts_by_hour,
     "report-count-dayofweek.html": plot_counts_by_weekday,
     "report-count-month.html": plot_counts_by_month,

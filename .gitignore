@@ -2,6 +2,7 @@ in/
 inStewa/
 out/
 out2/
+outlocal/
 .idea/
 meteor_detect.log
 .DS_Store

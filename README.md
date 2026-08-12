@@ -20,13 +20,15 @@ Old [version, repository and deprecated/long description](https://github.com/max
 
 ## Instructions
 
-### Install (macOS or newer linux)
+### Install
+
+#### macOS or newer linux
 
 - `python3.14 -m venv .venv`
 - `source .venv/bin/activate`
 - `pip install -r requirements.txt`
 
-### Install (old Ubuntu)
+#### Old Ubuntu
 
 - `python -m venv .venv`
 - `source .venv/bin/activate`

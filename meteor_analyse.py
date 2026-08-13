@@ -333,17 +333,21 @@ def plot_weekday_hour_heatmap(dataframe: pd.DataFrame) -> go.Figure:
 
 
 def plot_date_hour_heatmap(dataframe: pd.DataFrame) -> go.Figure:
-    return _heatmap_figure(
+    figure = _heatmap_figure(
         _date_hour_matrix(dataframe),
         "Heatmap: Detektionen nach Datum und Stunde", "Datum",
     )
+    figure.update_yaxes(autorange="reversed")
+    return figure
 
 
 def plot_discarded_date_hour_heatmap(dataframe: pd.DataFrame) -> go.Figure:
-    return _heatmap_figure(
+    figure = _heatmap_figure(
         _date_hour_matrix(dataframe, discarded_only=True),
         "Heatmap: Verworfene Detektionen nach Datum und Stunde", "Datum",
     )
+    figure.update_yaxes(autorange="reversed")
+    return figure
 
 
 PLOTS: dict[str, Callable[[pd.DataFrame], go.Figure]] = {

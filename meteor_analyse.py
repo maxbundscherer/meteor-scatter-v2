@@ -141,36 +141,35 @@ def plot_duration_histogram(dataframe: pd.DataFrame) -> go.Figure:
 
 
 def plot_duration_snr(dataframe: pd.DataFrame) -> go.Figure:
-    if dataframe.empty:
-        return _empty_figure("SNR vs. Event-Dauer")
+    detected = dataframe[dataframe["status"] == "detected"]
+    if detected.empty:
+        return _empty_figure("SNR vs. Event-Dauer (nicht verworfen)")
 
     figure = go.Figure()
-    for status, group in dataframe.groupby("status", sort=False):
-        hover_data = group[["start_time", "snr_mean_db", "snr_max_db"]]
-        figure.add_trace(go.Scatter(
-            x=group["duration_seconds"], y=group["snr_mean_db"],
-            mode="markers", name=f"{status} – SNR Mittel",
-            legendgroup=str(status), marker={"symbol": "circle"},
-            customdata=hover_data,
-            hovertemplate=(
-                "Dauer: %{x:.3f} s<br>SNR mittel: %{customdata[1]:.3f} dB"
-                "<br>SNR max.: %{customdata[2]:.3f} dB"
-                "<br>Zeit: %{customdata[0]}<extra>%{fullData.name}</extra>"
-            ),
-        ))
-        figure.add_trace(go.Scatter(
-            x=group["duration_seconds"], y=group["snr_max_db"],
-            mode="markers", name=f"{status} – SNR Maximum",
-            legendgroup=str(status), marker={"symbol": "x"},
-            customdata=hover_data,
-            hovertemplate=(
-                "Dauer: %{x:.3f} s<br>SNR mittel: %{customdata[1]:.3f} dB"
-                "<br>SNR max.: %{customdata[2]:.3f} dB"
-                "<br>Zeit: %{customdata[0]}<extra>%{fullData.name}</extra>"
-            ),
-        ))
+    hover_data = detected[["start_time", "snr_mean_db", "snr_max_db"]]
+    figure.add_trace(go.Scatter(
+        x=detected["duration_seconds"], y=detected["snr_mean_db"],
+        mode="markers", name="SNR Mittel", marker={"symbol": "circle"},
+        customdata=hover_data,
+        hovertemplate=(
+            "Dauer: %{x:.3f} s<br>SNR mittel: %{customdata[1]:.3f} dB"
+            "<br>SNR max.: %{customdata[2]:.3f} dB"
+            "<br>Zeit: %{customdata[0]}<extra>%{fullData.name}</extra>"
+        ),
+    ))
+    figure.add_trace(go.Scatter(
+        x=detected["duration_seconds"], y=detected["snr_max_db"],
+        mode="markers", name="SNR Maximum", marker={"symbol": "x"},
+        customdata=hover_data,
+        hovertemplate=(
+            "Dauer: %{x:.3f} s<br>SNR mittel: %{customdata[1]:.3f} dB"
+            "<br>SNR max.: %{customdata[2]:.3f} dB"
+            "<br>Zeit: %{customdata[0]}<extra>%{fullData.name}</extra>"
+        ),
+    ))
     figure = _layout(
-        figure, "SNR vs. Event-Dauer", "Dauer [s]", "SNR [dB]"
+        figure, "SNR vs. Event-Dauer (nicht verworfen)",
+        "Dauer [s]", "SNR [dB]",
     )
     figure.update_layout(hovermode="closest")
     return figure

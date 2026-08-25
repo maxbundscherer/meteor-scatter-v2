@@ -16,7 +16,10 @@ Old [version, repository and deprecated/long description](https://github.com/max
 
 ## Visualizations (csv files)
 
-tbd
+![](resources/demo0.png)
+![](resources/demo1.png)
+![](resources/demo2.png)
+![](resources/demo3.png)
 
 ## Approach
 

@@ -25,7 +25,9 @@ from typing import Iterator
 import numpy as np
 
 EPSILON = np.finfo(np.float64).tiny
-OUTPUT_DIR = Path("out")
+OUTPUT_DIR = Path("out_tmp_test")
+EVENT_CSV_NAME = "meteor_events.csv"
+LOG_FILE_NAME = "meteor_detect.log"
 
 SIGNAL_BAND = (950.0, 1050.0)
 NOISE_1_BAND = (750.0, 850.0)
@@ -434,7 +436,7 @@ class MeteorDetector:
             event_threshold_offset_db: float,
             threshold_freeze: float,
             frequency_offset_hz: float,
-            event_csv: Path,
+            output_dir: Path,
             logger: logging.Logger,
     ) -> None:
         self.hop_seconds = hop_seconds
@@ -456,7 +458,7 @@ class MeteorDetector:
         self.event_snrs: list[float] = []
         self.baseline_frozen_until = 0.0
         self.events: deque[MeteorEvent] = deque(maxlen=1000)
-        self.event_csv = self._create_event_csv(event_csv)
+        self.event_csv = self._create_event_csv(output_dir)
         self.logger.info("Neue Event-CSV angelegt: %s", self.event_csv)
 
         self.df = float(frequencies[1] - frequencies[0])
@@ -488,15 +490,16 @@ class MeteorDetector:
         ]
 
     @classmethod
-    def _create_event_csv(cls, base_path: Path) -> Path:
-        base_path.parent.mkdir(parents=True, exist_ok=True)
-        suffix = base_path.suffix or ".csv"
-        stem = base_path.stem if base_path.suffix else base_path.name
+    def _create_event_csv(cls, output_dir: Path) -> Path:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        base_path = Path(EVENT_CSV_NAME)
+        suffix = base_path.suffix
+        stem = base_path.stem
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f_UTC")
         sequence = 0
         while True:
             counter = "" if sequence == 0 else f"_{sequence}"
-            event_csv = base_path.parent / f"{stem}_{timestamp}{counter}{suffix}"
+            event_csv = output_dir / f"{stem}_{timestamp}{counter}{suffix}"
             try:
                 with event_csv.open("x", newline="", encoding="utf-8") as csv_file:
                     csv.DictWriter(
@@ -676,7 +679,7 @@ def plot_stream(
         event_threshold_offset_db=args.event_threshold_offset_db,
         threshold_freeze=args.threshold_freeze,
         frequency_offset_hz=args.freq_offset_hz,
-        event_csv=args.event_csv,
+        output_dir=args.output_dir,
         logger=logger,
     )
 
@@ -925,14 +928,14 @@ def add_plot_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--threshold-freeze", type=positive_float, default=10.0,
                         help="Baseline nach Event einfrieren (Standard: 10 s)")
     parser.add_argument(
-        "--event-csv",
+        "--output-dir",
         type=Path,
-        default=OUTPUT_DIR / "meteor_events.csv",
-        help="Basisname der neuen Event-CSV (Standard: out/meteor_events.csv)",
+        default=OUTPUT_DIR,
+        help="Ausgabeordner für CSV und Logdatei (Standard: out)",
     )
 
 
-def configure_logger(log_file: Path) -> logging.Logger:
+def configure_logger(output_dir: Path) -> logging.Logger:
     logger = logging.getLogger("meteor_detect")
     logger.setLevel(logging.INFO)
     logger.propagate = False
@@ -943,7 +946,8 @@ def configure_logger(log_file: Path) -> logging.Logger:
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    log_file.parent.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    log_file = output_dir / LOG_FILE_NAME
     file_handler = logging.FileHandler(log_file, encoding="utf-8")
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
@@ -960,12 +964,6 @@ def build_parser() -> argparse.ArgumentParser:
     wav_parser.add_argument("file", type=Path)
     wav_parser.add_argument("--no-realtime", action="store_true",
                             help="WAV so schnell wie möglich statt in Echtzeit lesen")
-    wav_parser.add_argument(
-        "--log-file",
-        type=Path,
-        default="meteor_detect.log",
-        help="Logdatei (Standard: meteor_detect.log)",
-    )
     add_plot_arguments(wav_parser)
 
     twitch_parser = subparsers.add_parser("twitch", help="Twitch-Kanal live analysieren")
@@ -978,12 +976,6 @@ def build_parser() -> argparse.ArgumentParser:
                                help="Pause vor Neuverbindung in Sekunden (Standard: 10)")
     twitch_parser.add_argument("--stall-timeout", type=positive_float, default=10.0,
                                help="Reconnect ohne Audiodaten nach Sekunden (Standard: 10)")
-    twitch_parser.add_argument(
-        "--log-file",
-        type=Path,
-        default="meteor_detect.log",
-        help="Logdatei (Standard: meteor_detect.log)",
-    )
     add_plot_arguments(twitch_parser)
     return parser
 
@@ -997,6 +989,7 @@ def main() -> int:
         parser.error("--db-min muss kleiner als --db-max sein")
     if args.no_gui and args.save:
         parser.error("--save kann nicht zusammen mit --no-gui verwendet werden")
+    args.output_dir = args.output_dir.expanduser()
 
     try:
         if args.source == "wav":
@@ -1005,7 +998,7 @@ def main() -> int:
             with wave.open(str(args.file), "rb") as wav_info:
                 rate = wav_info.getframerate()
             chunk_frames = max(1, round(rate * args.update))
-            logger = configure_logger(args.log_file)
+            logger = configure_logger(args.output_dir)
             logger.info("WAV-Analyse gestartet: %s", args.file)
             with WavSource(str(args.file), chunk_frames, not args.no_realtime) as source:
                 plot_stream(source, args, args.file.name, logger)
@@ -1013,7 +1006,7 @@ def main() -> int:
             if args.sample_rate <= 0:
                 parser.error("--sample-rate muss größer als 0 sein")
             chunk_frames = max(1, round(args.sample_rate * args.update))
-            logger = configure_logger(args.log_file)
+            logger = configure_logger(args.output_dir)
             with TwitchSource(
                     args.channel,
                     args.sample_rate,

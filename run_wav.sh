@@ -1,6 +1,6 @@
 python meteor_detect.py wav \
   sample.wav \
-  --threshold-sigma 4.0 \
+  --output-dir "output_local_wav/" \
   --no-realtime \
   --db-min -60 \
   --db-max -30

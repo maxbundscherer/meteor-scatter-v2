@@ -37,7 +37,7 @@ Old [version, repository and deprecated/long description](https://github.com/max
 
 #### Old Ubuntu
 
-- `python -m venv .venv`
+- `python3.10 -m venv .venv`
 - `source .venv/bin/activate`
 - `pip install -r requirements_ubuntu.txt`
 

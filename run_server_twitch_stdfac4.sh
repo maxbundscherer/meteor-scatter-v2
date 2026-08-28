@@ -1,6 +1,8 @@
 python meteor_detect.py twitch \
   astronomiemuseum \
-  --output-dir "output_local_twitch/" \
+  --no-gui \
+  --output-dir "out_first_meas_stdfac4/" \
+  --threshold-sigma 4.0 \
   --freq-offset-hz -25 \
   --db-min -95 \
   --db-max -50

@@ -46,8 +46,8 @@ Old [version, repository and deprecated/long description](https://github.com/max
 #### Detection
 
 - `source .venv/bin/activate`
-- `./run_wav.sh` (offline demo with sample wav-file) or `./run_twitch.sh` (live stream from Astronomiemuseum der
-  Sternwarte Sonneberg)
+- `./run_local_wav.sh` (offline demo with sample wav-file) or `./run_local_twitch.sh` (live stream from Astronomiemuseum
+  der Sternwarte Sonneberg)
 
 #### Analyze
 

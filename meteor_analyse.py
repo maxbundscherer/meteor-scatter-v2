@@ -393,6 +393,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "csv", nargs="?", type=Path,
         help="CSV-Datei (Standard: neueste meteor_events_*.csv in out/)",
+        # default="/Users/maximilianbundscherer/Documents/Sync/meteor-scatter-v2/outFactor5/meteor_events_20260812_131006_637960_UTC.csv"
     )
     parser.add_argument(
         "--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR,

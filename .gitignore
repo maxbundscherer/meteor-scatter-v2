@@ -7,6 +7,9 @@ out_tmp_test/
 output_local_wav/
 output_local_twitch/
 
+out_first_meas_stdfac4/
+out_first_meas_stdfac5/
+
 .idea/
 meteor_detect.log
 .DS_Store

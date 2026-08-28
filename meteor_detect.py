@@ -480,6 +480,7 @@ class MeteorDetector:
         self.logger.info(
             "Gemeinsamer Frequenz-Offset: %+.3f Hz", self.frequency_offset_hz
         )
+        self.logger.info("Threshold-Sigma: %g", self.threshold_sigma)
         self.logger.info("Zustand: %s", self.state.value)
 
     @staticmethod

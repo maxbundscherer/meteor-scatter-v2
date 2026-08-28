@@ -52,7 +52,9 @@ Old [version, repository and deprecated/long description](https://github.com/max
 #### Analyze
 
 - `source .venv/bin/activate`
-- `python meteor_analyse.py`
+- `python meteor_analyse.py --input-dir INPUT_ORDNER --output-dir OUTPUT_ORDNER`
+
+Alle CSV-Dateien direkt im Eingabeordner werden gemeinsam ausgewertet.
 
 #### Old Analyze
 

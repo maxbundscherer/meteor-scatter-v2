@@ -1,7 +1,7 @@
 """Interaktive Plotly-Auswertung der CSV-Dateien aus ``meteor_detect.py``.
 
-Ohne Argument wird die zuletzt geaenderte ``meteor_events_*.csv`` aus ``out/``
-geladen. Jede Visualisierung wird als eigene HTML-Datei gespeichert.
+Alle CSV-Dateien aus einem Eingabeordner werden zu einem DataFrame
+zusammengefuehrt. Jede Visualisierung wird als eigene HTML-Datei gespeichert.
 """
 
 from __future__ import annotations
@@ -14,7 +14,9 @@ import pandas as pd
 import plotly.graph_objects as go
 
 SCRIPT_DIR = Path(__file__).resolve().parent
+DEFAULT_INPUT_DIR = SCRIPT_DIR / "out_first_meas_stdfac4"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR / "out"
+
 REQUIRED_COLUMNS = {
     "start_time", "stop_time", "start_seconds", "stop_seconds",
     "duration_seconds", "snr_mean_db", "snr_max_db", "status",
@@ -33,28 +35,39 @@ MONTH_LABELS = [
 ]
 
 
-def newest_event_csv(output_dir: Path = DEFAULT_OUTPUT_DIR) -> Path:
-    """Liefert die zuletzt geaenderte Event-CSV im Ausgabeordner."""
-    candidates = list(output_dir.glob("meteor_events_*.csv"))
-    if not candidates:
+def find_csv_files(input_dir: Path | str = DEFAULT_INPUT_DIR) -> list[Path]:
+    """Liefert alle CSV-Dateien direkt im Eingabeordner."""
+    directory = Path(input_dir).expanduser().resolve()
+    if not directory.is_dir():
+        raise NotADirectoryError(f"Eingabeordner nicht gefunden: {directory}")
+
+    csv_files = sorted(
+        path for path in directory.iterdir()
+        if path.is_file() and path.suffix.lower() == ".csv"
+    )
+    if not csv_files:
         raise FileNotFoundError(
-            f"Keine meteor_events_*.csv in '{output_dir}' gefunden."
+            f"Keine CSV-Dateien im Eingabeordner gefunden: {directory}"
         )
-    return max(candidates, key=lambda path: path.stat().st_mtime)
+    return csv_files
 
 
-def load_events(csv_path: Path | str | None = None) -> pd.DataFrame:
-    """Laedt und validiert eine Event-CSV als pandas DataFrame."""
-    path = Path(csv_path).expanduser().resolve() if csv_path else newest_event_csv()
-    if not path.is_file():
-        raise FileNotFoundError(f"CSV-Datei nicht gefunden: {path}")
+def load_events(input_dir: Path | str = DEFAULT_INPUT_DIR) -> pd.DataFrame:
+    """Laedt, validiert und verbindet alle CSV-Dateien eines Ordners."""
+    csv_files = find_csv_files(input_dir)
+    dataframes: list[pd.DataFrame] = []
 
-    dataframe = pd.read_csv(path)
-    missing = REQUIRED_COLUMNS.difference(dataframe.columns)
-    if missing:
-        raise ValueError(
-            "In der CSV fehlen folgende Spalten: " + ", ".join(sorted(missing))
-        )
+    for csv_file in csv_files:
+        dataframe = pd.read_csv(csv_file)
+        missing = REQUIRED_COLUMNS.difference(dataframe.columns)
+        if missing:
+            raise ValueError(
+                f"In '{csv_file}' fehlen folgende Spalten: "
+                + ", ".join(sorted(missing))
+            )
+        dataframes.append(dataframe)
+
+    dataframe = pd.concat(dataframes, ignore_index=True)
 
     dataframe["start_time"] = pd.to_datetime(
         dataframe["start_time"], utc=True, errors="raise"
@@ -66,7 +79,8 @@ def load_events(csv_path: Path | str | None = None) -> pd.DataFrame:
         pd.to_numeric, errors="raise"
     )
     dataframe = dataframe.sort_values("start_time").reset_index(drop=True)
-    dataframe.attrs["source"] = path
+    dataframe.attrs["source"] = Path(input_dir).expanduser().resolve()
+    dataframe.attrs["source_files"] = csv_files
     return dataframe
 
 
@@ -391,13 +405,12 @@ def parse_args() -> argparse.Namespace:
         description="Meteor-Event-CSV mit Plotly visualisieren"
     )
     parser.add_argument(
-        "csv", nargs="?", type=Path,
-        help="CSV-Datei (Standard: neueste meteor_events_*.csv in out/)",
-        # default="/Users/maximilianbundscherer/Documents/Sync/meteor-scatter-v2/outFactor5/meteor_events_20260812_131006_637960_UTC.csv"
+        "--input-dir", type=Path, default=DEFAULT_INPUT_DIR,
+        help="Ordner mit den CSV-Dateien",
     )
     parser.add_argument(
         "--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR,
-        help="Zielordner fuer die einzelnen HTML-Dateien (Standard: out/)",
+        help="Zielordner fuer die einzelnen HTML-Dateien",
     )
     parser.add_argument(
         "--show", action="store_true",
@@ -408,10 +421,12 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    dataframe = load_events(args.csv)
-    print(f"Geladen: {dataframe.attrs['source']}")
-    print(f"Events:  {len(dataframe)}")
+    dataframe = load_events(args.input_dir)
+    print(f"Eingabeordner: {dataframe.attrs['source']}")
+    print(f"CSV-Dateien:   {len(dataframe.attrs['source_files'])}")
+    print(f"Events:        {len(dataframe)}")
 
+    args.output_dir = args.output_dir.expanduser().resolve()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for filename, plot_function in PLOTS.items():
         figure = plot_function(dataframe)

@@ -84,11 +84,14 @@ def load_events(input_dir: Path | str = DEFAULT_INPUT_DIR) -> pd.DataFrame:
     return dataframe
 
 
-def _layout(figure: go.Figure, title: str, x_title: str, y_title: str) -> go.Figure:
+def _layout(
+        figure: go.Figure, title: str, x_title: str, y_title: str,
+        height: int = 550,
+) -> go.Figure:
     figure.update_layout(
         title=title, xaxis_title=x_title, yaxis_title=y_title,
         template="plotly_white", hovermode="x unified",
-        width=1000, height=550,
+        width=1000, height=height,
     )
     return figure
 
@@ -326,7 +329,9 @@ def _date_hour_matrix(
     return matrix
 
 
-def _heatmap_figure(matrix: pd.DataFrame, title: str, y_title: str) -> go.Figure:
+def _heatmap_figure(
+        matrix: pd.DataFrame, title: str, y_title: str, height: int = 550,
+) -> go.Figure:
     # Funktioniert sowohl mit pandas-Versionen vor als auch nach Einfuehrung
     # von DataFrame.map.
     text = matrix.astype(str).mask(matrix == 0, "")
@@ -348,7 +353,7 @@ def _heatmap_figure(matrix: pd.DataFrame, title: str, y_title: str) -> go.Figure
                     text=text.iat[row_index, column_index],
                     showarrow=False, font={"color": "white"},
                 )
-    return _layout(figure, title, "Stunde (UTC)", y_title)
+    return _layout(figure, title, "Stunde (UTC)", y_title, height=height)
 
 
 def plot_weekday_hour_heatmap(dataframe: pd.DataFrame) -> go.Figure:
@@ -366,18 +371,22 @@ def plot_weekday_hour_heatmap(dataframe: pd.DataFrame) -> go.Figure:
 
 
 def plot_date_hour_heatmap(dataframe: pd.DataFrame) -> go.Figure:
+    matrix = _date_hour_matrix(dataframe)
     figure = _heatmap_figure(
-        _date_hour_matrix(dataframe),
+        matrix,
         "Heatmap: Detektionen nach Datum und Stunde", "Datum",
+        height=max(550, 180 + len(matrix) * 32),
     )
     figure.update_yaxes(autorange="reversed")
     return figure
 
 
 def plot_discarded_date_hour_heatmap(dataframe: pd.DataFrame) -> go.Figure:
+    matrix = _date_hour_matrix(dataframe, discarded_only=True)
     figure = _heatmap_figure(
-        _date_hour_matrix(dataframe, discarded_only=True),
+        matrix,
         "Heatmap: Verworfene Detektionen nach Datum und Stunde", "Datum",
+        height=max(550, 180 + len(matrix) * 32),
     )
     figure.update_yaxes(autorange="reversed")
     return figure

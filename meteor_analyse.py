@@ -447,7 +447,7 @@ def parse_args() -> argparse.Namespace:
             "Oberes Ende der Farbskala aller Heatmaps; ohne Angabe wird "
             "die Skala automatisch bestimmt"
         ),
-        default=400  # TODO
+        default=600  # TODO
     )
     args = parser.parse_args()
 

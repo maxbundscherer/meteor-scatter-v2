@@ -14,7 +14,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DEFAULT_INPUT_DIR = SCRIPT_DIR / "out_first_meas_stdfac4"
+DEFAULT_INPUT_DIR = SCRIPT_DIR / "out_first_meas_stdfac4"  # TODO
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR / "out"
 
 REQUIRED_COLUMNS = {
@@ -331,13 +331,15 @@ def _date_hour_matrix(
 
 def _heatmap_figure(
         matrix: pd.DataFrame, title: str, y_title: str, height: int = 550,
+        v_max: float | None = None,
 ) -> go.Figure:
     # Funktioniert sowohl mit pandas-Versionen vor als auch nach Einfuehrung
     # von DataFrame.map.
     text = matrix.astype(str).mask(matrix == 0, "")
     figure = go.Figure(go.Heatmap(
         z=matrix.to_numpy(), x=list(matrix.columns), y=list(matrix.index),
-        colorscale="Viridis", colorbar={"title": "Anzahl"},
+        colorscale="Viridis", zmin=0, zmax=v_max,
+        colorbar={"title": "Anzahl"},
         hovertemplate=(
                 "Stunde: %{x}:00 UTC<br>" + y_title + ": %{y}"
                                                       "<br>Anzahl: %{z}<extra></extra>"
@@ -356,7 +358,9 @@ def _heatmap_figure(
     return _layout(figure, title, "Stunde (UTC)", y_title, height=height)
 
 
-def plot_weekday_hour_heatmap(dataframe: pd.DataFrame) -> go.Figure:
+def plot_weekday_hour_heatmap(
+        dataframe: pd.DataFrame, v_max: float | None = None,
+) -> go.Figure:
     data = dataframe.assign(
         hour=dataframe["start_time"].dt.hour,
         dayofweek=dataframe["start_time"].dt.dayofweek,
@@ -366,27 +370,33 @@ def plot_weekday_hour_heatmap(dataframe: pd.DataFrame) -> go.Figure:
     )
     matrix.index = WEEKDAY_LABELS
     return _heatmap_figure(
-        matrix, "Heatmap: Wochentag und Stunde", "Wochentag"
+        matrix, "Heatmap: Wochentag und Stunde", "Wochentag", v_max=v_max,
     )
 
 
-def plot_date_hour_heatmap(dataframe: pd.DataFrame) -> go.Figure:
+def plot_date_hour_heatmap(
+        dataframe: pd.DataFrame, v_max: float | None = None,
+) -> go.Figure:
     matrix = _date_hour_matrix(dataframe)
     figure = _heatmap_figure(
         matrix,
         "Heatmap: Detektionen nach Datum und Stunde", "Datum",
         height=max(550, 180 + len(matrix) * 32),
+        v_max=v_max,
     )
     figure.update_yaxes(autorange="reversed")
     return figure
 
 
-def plot_discarded_date_hour_heatmap(dataframe: pd.DataFrame) -> go.Figure:
+def plot_discarded_date_hour_heatmap(
+        dataframe: pd.DataFrame, v_max: float | None = None,
+) -> go.Figure:
     matrix = _date_hour_matrix(dataframe, discarded_only=True)
     figure = _heatmap_figure(
         matrix,
         "Heatmap: Verworfene Detektionen nach Datum und Stunde", "Datum",
         height=max(550, 180 + len(matrix) * 32),
+        v_max=v_max,
     )
     figure.update_yaxes(autorange="reversed")
     return figure
@@ -408,6 +418,12 @@ PLOTS: dict[str, Callable[[pd.DataFrame], go.Figure]] = {
     "report-heatmap-discarded-date-hour.html": plot_discarded_date_hour_heatmap,
 }
 
+HEATMAP_PLOTS = {
+    plot_weekday_hour_heatmap,
+    plot_date_hour_heatmap,
+    plot_discarded_date_hour_heatmap,
+}
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -425,7 +441,19 @@ def parse_args() -> argparse.Namespace:
         "--show", action="store_true",
         help="HTML-Visualisierungen nach dem Erzeugen im Browser anzeigen",
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "--heatmap-vmax", type=float, metavar="V_MAX",
+        help=(
+            "Oberes Ende der Farbskala aller Heatmaps; ohne Angabe wird "
+            "die Skala automatisch bestimmt"
+        ),
+        default=400  # TODO
+    )
+    args = parser.parse_args()
+
+    if args.heatmap_vmax is not None and args.heatmap_vmax <= 0:
+        parser.error("--heatmap-vmax muss größer als 0 sein")
+    return args
 
 
 def main() -> None:
@@ -438,7 +466,10 @@ def main() -> None:
     args.output_dir = args.output_dir.expanduser().resolve()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for filename, plot_function in PLOTS.items():
-        figure = plot_function(dataframe)
+        if plot_function in HEATMAP_PLOTS:
+            figure = plot_function(dataframe, v_max=args.heatmap_vmax)
+        else:
+            figure = plot_function(dataframe)
         output_path = args.output_dir / filename
         figure.write_html(output_path, include_plotlyjs=True, full_html=True)
         print(f"Report gespeichert: {output_path.resolve()}")

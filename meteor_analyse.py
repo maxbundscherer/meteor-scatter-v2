@@ -419,6 +419,24 @@ def _mark_meteor_events(
             line={"color": "#e03131", "width": 1},
             layer="above",
         )
+        event_maximum = pd.to_datetime(event.maximum).date()
+        maximum_rows = [
+            row_index for row_index, row_date in enumerate(row_dates)
+            if row_date == event_maximum
+        ]
+        if maximum_rows:
+            maximum_row = maximum_rows[0]
+            figure.add_shape(
+                type="line",
+                x0=bar_x0,
+                x1=bar_x1,
+                xref="paper",
+                y0=maximum_row,
+                y1=maximum_row,
+                yref="y",
+                line={"color": "#ffd43b", "width": 5},
+                layer="above",
+            )
         figure.add_annotation(
             x=bar_x1 + 0.01,
             xref="paper",
@@ -427,7 +445,8 @@ def _mark_meteor_events(
             text=(
                 f"{event.label}<br>"
                 f"Start: {event_start:%d.%m.%Y} | "
-                f"Stop: {event_end:%d.%m.%Y}"
+                f"Stop: {event_end:%d.%m.%Y}<br>"
+                f"Höchststand: {event_maximum:%d.%m.%Y}"
             ),
             showarrow=False,
             xanchor="left",

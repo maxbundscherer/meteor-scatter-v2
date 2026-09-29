@@ -369,6 +369,7 @@ def _mark_meteor_events(
         return figure
 
     row_dates = pd.to_datetime(matrix.index, format="%d.%m.%Y").date
+    visible_events = []
     for event in METEOR_EVENT_RANGES:
         event_start = pd.to_datetime(event.start).date()
         event_end = pd.to_datetime(event.end).date()
@@ -381,10 +382,35 @@ def _mark_meteor_events(
 
         first_row = event_rows[0]
         last_row = event_rows[-1]
+        visible_events.append(
+            (first_row, last_row, event, event_start, event_end)
+        )
+
+    lane_ends = []
+    positioned_events = []
+    for first_row, last_row, event, event_start, event_end in sorted(
+            visible_events, key=lambda item: (item[0], item[1], item[2].label)
+    ):
+        for lane, lane_end in enumerate(lane_ends):
+            if first_row > lane_end:
+                lane_ends[lane] = last_row
+                break
+        else:
+            lane = len(lane_ends)
+            lane_ends.append(last_row)
+
+        positioned_events.append(
+            (first_row, last_row, event, event_start, event_end, lane)
+        )
+
+    lane_spacing = 0.24
+    for first_row, last_row, event, event_start, event_end, lane in positioned_events:
+        bar_x0 = 1.01 + lane * lane_spacing
+        bar_x1 = bar_x0 + 0.015
         figure.add_shape(
             type="rect",
-            x0=1.01,
-            x1=1.025,
+            x0=bar_x0,
+            x1=bar_x1,
             xref="paper",
             y0=first_row - 0.5,
             y1=last_row + 0.5,
@@ -394,17 +420,26 @@ def _mark_meteor_events(
             layer="above",
         )
         figure.add_annotation(
-            x=1.035,
+            x=bar_x1 + 0.01,
             xref="paper",
             y=(first_row + last_row) / 2,
             yref="y",
-            text=event.label,
+            text=(
+                f"{event.label}<br>"
+                f"Start: {event_start:%d.%m.%Y} | "
+                f"Stop: {event_end:%d.%m.%Y}"
+            ),
             showarrow=False,
             xanchor="left",
             font={"color": "#e03131", "size": 12},
         )
 
-    figure.update_layout(margin={"r": 180})
+    lane_count = max(1, len(lane_ends))
+    right_margin = 230 * lane_count
+    figure.update_layout(
+        width=1020 + right_margin,
+        margin={"r": right_margin},
+    )
     return figure
 
 

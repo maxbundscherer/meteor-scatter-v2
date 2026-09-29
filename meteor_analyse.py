@@ -13,6 +13,8 @@ from typing import Callable
 import pandas as pd
 import plotly.graph_objects as go
 
+from utils.MeteorEvents import MeteorEvents
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_INPUT_DIR = SCRIPT_DIR / "out_first_meas_stdfac4"  # TODO
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR / "out"
@@ -33,6 +35,7 @@ MONTH_LABELS = [
     "Jan", "Feb", "Mär", "Apr", "Mai", "Jun",
     "Jul", "Aug", "Sep", "Okt", "Nov", "Dez",
 ]
+METEOR_EVENT_RANGES = MeteorEvents.overwrite_years(MeteorEvents.data_items)
 
 
 def find_csv_files(input_dir: Path | str = DEFAULT_INPUT_DIR) -> list[Path]:
@@ -358,6 +361,53 @@ def _heatmap_figure(
     return _layout(figure, title, "Stunde (UTC)", y_title, height=height)
 
 
+def _mark_meteor_events(
+        figure: go.Figure, matrix: pd.DataFrame,
+) -> go.Figure:
+    """Markiert Meteorstrom-Zeitfenster rechts neben einer Datums-Heatmap."""
+    if matrix.empty:
+        return figure
+
+    row_dates = pd.to_datetime(matrix.index, format="%d.%m.%Y").date
+    for event in METEOR_EVENT_RANGES:
+        event_start = pd.to_datetime(event.start).date()
+        event_end = pd.to_datetime(event.end).date()
+        event_rows = [
+            row_index for row_index, row_date in enumerate(row_dates)
+            if event_start <= row_date <= event_end
+        ]
+        if not event_rows:
+            continue
+
+        first_row = event_rows[0]
+        last_row = event_rows[-1]
+        figure.add_shape(
+            type="rect",
+            x0=1.01,
+            x1=1.025,
+            xref="paper",
+            y0=first_row - 0.5,
+            y1=last_row + 0.5,
+            yref="y",
+            fillcolor="#e03131",
+            line={"color": "#e03131", "width": 1},
+            layer="above",
+        )
+        figure.add_annotation(
+            x=1.035,
+            xref="paper",
+            y=(first_row + last_row) / 2,
+            yref="y",
+            text=event.label,
+            showarrow=False,
+            xanchor="left",
+            font={"color": "#e03131", "size": 12},
+        )
+
+    figure.update_layout(margin={"r": 180})
+    return figure
+
+
 def plot_weekday_hour_heatmap(
         dataframe: pd.DataFrame, v_max: float | None = None,
 ) -> go.Figure:
@@ -384,6 +434,7 @@ def plot_date_hour_heatmap(
         height=max(550, 180 + len(matrix) * 32),
         v_max=v_max,
     )
+    figure = _mark_meteor_events(figure, matrix)
     figure.update_yaxes(autorange="reversed")
     return figure
 
@@ -398,6 +449,7 @@ def plot_discarded_date_hour_heatmap(
         height=max(550, 180 + len(matrix) * 32),
         v_max=v_max,
     )
+    figure = _mark_meteor_events(figure, matrix)
     figure.update_yaxes(autorange="reversed")
     return figure
 

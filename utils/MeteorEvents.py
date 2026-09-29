@@ -42,154 +42,150 @@ class MeteorEvents:
     data_items = [
         DateRange(start=pd.to_datetime(get_data_items("2000-01-03", "start")),
                   end=pd.to_datetime(get_data_items("2000-01-03", "end")),
-                  label="Quadrantiden"),
+                  label="Quadrantiden (80)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-01-18", "start")),
                   end=pd.to_datetime(get_data_items("2000-01-18", "end")),
-                  label="γ-Ursae Minoriden"),
+                  label="γ-Ursae Minoriden (3)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-02-08", "start")),
                   end=pd.to_datetime(get_data_items("2000-02-08", "end")),
-                  label="α-Centauriden"),
+                  label="α-Centauriden (6)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-04-22", "start")),
                   end=pd.to_datetime(get_data_items("2000-04-22", "end")),
-                  label="Lyriden"),
+                  label="April Lyriden (18)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-04-23", "start")),
                   end=pd.to_datetime(get_data_items("2000-04-23", "end")),
-                  label="π-Puppiden"),
+                  label="π-Puppiden (Var)"),
 
-        DateRange(start=pd.to_datetime(get_data_items("2000-05-05", "start")),
-                  end=pd.to_datetime(get_data_items("2000-05-05", "end")),
-                  label="eta-Aquariden"),
+        DateRange(start=pd.to_datetime(get_data_items("2000-05-06", "start")),
+                  end=pd.to_datetime(get_data_items("2000-05-06", "end")),
+                  label="η-Aquariiden (50)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-05-10", "start")),
                   end=pd.to_datetime(get_data_items("2000-05-10", "end")),
-                  label="η-Lyriden"),
+                  label="η-Lyriden (3)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-06-07", "start")),
                   end=pd.to_datetime(get_data_items("2000-06-07", "end")),
-                  label="Arietiden"),
+                  label="Tages-Arietiden (30)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-06-27", "start")),
                   end=pd.to_datetime(get_data_items("2000-06-27", "end")),
-                  label="Juni Bootiden"),
+                  label="Juni Bootiden (Var)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-07-10", "start")),
                   end=pd.to_datetime(get_data_items("2000-07-10", "end")),
-                  label="Juli Pegasiden"),
+                  label="Juli Pegasiden (3)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-07-28", "start")),
                   end=pd.to_datetime(get_data_items("2000-07-28", "end")),
-                  label="Juli-γ-Draconiden"),
+                  label="Juli γ-Draconiden (5)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-07-31", "start")),
                   end=pd.to_datetime(get_data_items("2000-07-31", "end")),
-                  label="S. δ-Aquariden"),
+                  label="S. δ-Aquariiden (25)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-07-31", "start")),
                   end=pd.to_datetime(get_data_items("2000-07-31", "end")),
-                  label="α-Capricorniden"),
+                  label="α-Capricorniden (5)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-08-07", "start")),
                   end=pd.to_datetime(get_data_items("2000-08-07", "end")),
-                  label="η-Eridaniden"),
-
-        DateRange(start=pd.to_datetime(get_data_items("2000-06-09", "start")),
-                  end=pd.to_datetime(get_data_items("2000-06-09", "end")),
-                  label="Zeta Perseiden"),
+                  label="η-Eridaniden (3)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-08-12", "start")),
                   end=pd.to_datetime(get_data_items("2000-08-12", "end")),
-                  label="Perseiden"),
+                  label="Perseiden (100)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-08-16", "start")),
                   end=pd.to_datetime(get_data_items("2000-08-16", "end")),
-                  label="κ-Cygni den"),
+                  label="κ-Cygniden (3)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-09-01", "start")),
                   end=pd.to_datetime(get_data_items("2000-09-01", "end")),
-                  label="Aurigiden"),
+                  label="Aurigiden (6)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-09-09", "start")),
                   end=pd.to_datetime(get_data_items("2000-09-09", "end")),
-                  label="Sep-ε-Perseiden"),
+                  label="Sep. ε-Perseiden (8)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-09-27", "start")),
                   end=pd.to_datetime(get_data_items("2000-09-27", "end")),
-                  label="Tages-Sextantiden"),
+                  label="Tages-Sextantiden (5)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-10-05", "start")),
                   end=pd.to_datetime(get_data_items("2000-10-05", "end")),
-                  label="Okt. Camelopard."),
+                  label="Okt. Camelopard. (5)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-10-08", "start")),
                   end=pd.to_datetime(get_data_items("2000-10-08", "end")),
-                  label="Okt. Draconiden"),
+                  label="Okt. Draconiden (5)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-10-11", "start")),
                   end=pd.to_datetime(get_data_items("2000-10-11", "end")),
-                  label="δ-Aurigiden"),
+                  label="δ-Aurigiden (2)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-10-18", "start")),
                   end=pd.to_datetime(get_data_items("2000-10-18", "end")),
-                  label="ε-Gemini den"),
+                  label="ε-Geminiden (3)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-10-21", "start")),
                   end=pd.to_datetime(get_data_items("2000-10-21", "end")),
-                  label="Orioniden"),
+                  label="Orioniden (20)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-10-24", "start")),
                   end=pd.to_datetime(get_data_items("2000-10-24", "end")),
-                  label="Leonis Minoriden"),
+                  label="Leonis Minoriden (2)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-11-05", "start")),
                   end=pd.to_datetime(get_data_items("2000-11-05", "end")),
-                  label="S. Tauriden"),
+                  label="S. Tauriden (7)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-11-12", "start")),
                   end=pd.to_datetime(get_data_items("2000-11-12", "end")),
-                  label="N. Tauriden"),
+                  label="N. Tauriden (5)"),
 
-        DateRange(start=pd.to_datetime(get_data_items("2000-11-18", "start")),
-                  end=pd.to_datetime(get_data_items("2000-11-18", "end")),
-                  label="Leoniden"),
+        DateRange(start=pd.to_datetime(get_data_items("2000-11-17", "start")),
+                  end=pd.to_datetime(get_data_items("2000-11-17", "end")),
+                  label="Leoniden (10)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-11-21", "start")),
                   end=pd.to_datetime(get_data_items("2000-11-21", "end")),
-                  label="α-Monocerotiden"),
+                  label="α-Monocerotiden (Var)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-11-28", "start")),
                   end=pd.to_datetime(get_data_items("2000-11-28", "end")),
-                  label="Nov. Orioniden"),
+                  label="Nov. Orioniden (3)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-12-01", "start")),
                   end=pd.to_datetime(get_data_items("2000-12-01", "end")),
-                  label="Phoeniciden"),
+                  label="Phoeniciden (Var)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-12-07", "start")),
                   end=pd.to_datetime(get_data_items("2000-12-07", "end")),
-                  label="Puppid-Veliden"),
+                  label="Puppid-Veliden (10)"),
         DateRange(start=pd.to_datetime(get_data_items("2000-12-09", "start")),
                   end=pd.to_datetime(get_data_items("2000-12-09", "end")),
-                  label="Monocerotiden"),
+                  label="Monocerotiden (3)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-12-09", "start")),
                   end=pd.to_datetime(get_data_items("2000-12-09", "end")),
-                  label="α-Hydriden"),
+                  label="σ-Hydriden (7)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-12-14", "start")),
                   end=pd.to_datetime(get_data_items("2000-12-14", "end")),
-                  label="Geminiden"),
+                  label="Geminiden (150)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-12-16", "start")),
                   end=pd.to_datetime(get_data_items("2000-12-16", "end")),
-                  label="Comae Bereniciden"),
+                  label="Comae Bereniciden (3)"),
 
         DateRange(start=pd.to_datetime(get_data_items("2000-12-22", "start")),
                   end=pd.to_datetime(get_data_items("2000-12-22", "end")),
-                  label="Ursiden"),
+                  label="Ursiden (10)"),
     ]
 
     # Preserve the public API as a static method after initializing data_items.

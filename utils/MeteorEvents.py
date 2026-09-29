@@ -36,6 +36,9 @@ class MeteorEvents:
             raise ValueError("split must be 'start' or 'end'")
         return shifted.strftime("%Y-%m-%d")
 
+    # During class creation, call the undecorated function while building the ranges.
+    get_data_items = get_data_items.__func__
+
     data_items = [
         DateRange(start=pd.to_datetime(get_data_items("2000-01-03", "start")),
                   end=pd.to_datetime(get_data_items("2000-01-03", "end")),
@@ -188,6 +191,9 @@ class MeteorEvents:
                   end=pd.to_datetime(get_data_items("2000-12-22", "end")),
                   label="Ursiden"),
     ]
+
+    # Preserve the public API as a static method after initializing data_items.
+    get_data_items = staticmethod(get_data_items)
 
     @staticmethod
     def overwrite_years(data_items):
